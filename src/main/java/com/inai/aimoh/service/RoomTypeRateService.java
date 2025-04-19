@@ -79,6 +79,13 @@ public class RoomTypeRateService {
                 .orElseThrow(() -> new RuntimeException("Такого тарифа нет!"));
     }
 
+    /**
+     * Метод для редактирования тарифа либо администратором, либо менеджером. Редактировать могут только
+     * цену и описание (price, description).
+     * @param roomTypeRateId редактируется через id сущности RoomTypeRate.
+     * @param editRoomTypeRateDTO через этот слой передается данные цены и описания.
+     */
+
     @Transactional
     public void updateRoomTypeRate(Long roomTypeRateId, EditRoomTypeRateDTO editRoomTypeRateDTO) {
         RoomTypeRate roomTypeRate = roomTypeRateRepository.findById(roomTypeRateId)
