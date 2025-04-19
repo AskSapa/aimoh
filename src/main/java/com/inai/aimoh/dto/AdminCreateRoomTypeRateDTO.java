@@ -2,8 +2,8 @@ package com.inai.aimoh.dto;
 
 import java.math.BigDecimal;
 
-public record AdminCreateAndEditRoomTypeRateDTO(
+public record AdminCreateRoomTypeRateDTO(
         BigDecimal price,
         String description,
-        Long roomTypeRateId) {
+        Long roomTypeId) {
 }

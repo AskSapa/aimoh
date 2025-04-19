@@ -1,6 +1,7 @@
 package com.inai.aimoh.service;
 
-import com.inai.aimoh.dto.AdminCreateAndEditRoomTypeRateDTO;
+import com.inai.aimoh.dto.AdminCreateRoomTypeRateDTO;
+import com.inai.aimoh.dto.EditRoomTypeRateDTO;
 import com.inai.aimoh.entity.RoomType;
 import com.inai.aimoh.entity.RoomTypeRate;
 import com.inai.aimoh.repository.RoomTypeRateRepository;
@@ -26,30 +27,65 @@ public class RoomTypeRateService {
      * Нужно учитывать, что один тариф только для одного типа комнаты.
      */
 
-    public List<RoomTypeRate> getAllRoomTypeRates() {
+    public List<RoomTypeRate> findAllRoomTypeRates() {
         return roomTypeRateRepository.findAll();
     }
 
+
+
+
     /**
      * Метод для создания тарифа для определенного типа комнат администратором.
-     * @param adminCreateAndEditRoomTypeRateDTO - через этот слой передается данные
+     * @param adminCreateRoomTypeRateDTO - через этот слой передается данные
      *                                          для создания тарифа для определенного типа комнат
      */
 
     @Transactional
-    public void createRoomTypeRate(AdminCreateAndEditRoomTypeRateDTO adminCreateAndEditRoomTypeRateDTO) {
-        if (roomTypeRateRepository.existsByRoomType_Id(adminCreateAndEditRoomTypeRateDTO.roomTypeRateId())) {
+    public void createRoomTypeRate(AdminCreateRoomTypeRateDTO adminCreateRoomTypeRateDTO) {
+        if (roomTypeRateRepository.existsByRoomType_Id(adminCreateRoomTypeRateDTO.roomTypeId())) {
             throw new IllegalArgumentException("Уже есть тариф для данного типа комнат!");
         }
-        RoomType roomType = roomTypeRepository.findById(adminCreateAndEditRoomTypeRateDTO.roomTypeRateId())
+        RoomType roomType = roomTypeRepository.findById(adminCreateRoomTypeRateDTO.roomTypeId())
                 .orElseThrow(() -> new RuntimeException("Такого типа комнат нет!"));
 
         RoomTypeRate roomTypeRate = new RoomTypeRate();
-        roomTypeRate.setPrice(adminCreateAndEditRoomTypeRateDTO.price());
-        roomTypeRate.setDescription(adminCreateAndEditRoomTypeRateDTO.description());
+        roomTypeRate.setPrice(adminCreateRoomTypeRateDTO.price());
+        roomTypeRate.setDescription(adminCreateRoomTypeRateDTO.description());
         roomTypeRate.setRoomType(roomType);
         roomTypeRateRepository.save(roomTypeRate);
     }
 
 
+
+
+    /**
+     * Метод для удаления тарифа для определенного типа комнат администратором.
+     */
+
+    @Transactional
+    public void deleteRoomTypeRateById(Long roomTypeRateId) {
+        roomTypeRateRepository.deleteById(roomTypeRateId);
+    }
+
+
+
+
+    /**
+     * Метод для поиска тарифа определенного типа комнат по id.
+     */
+
+    public RoomTypeRate findRoomTypeRateById(Long roomTypeRateId) {
+        return roomTypeRateRepository.findById(roomTypeRateId)
+                .orElseThrow(() -> new RuntimeException("Такого тарифа нет!"));
+    }
+
+    @Transactional
+    public void updateRoomTypeRate(Long roomTypeRateId, EditRoomTypeRateDTO editRoomTypeRateDTO) {
+        RoomTypeRate roomTypeRate = roomTypeRateRepository.findById(roomTypeRateId)
+                .orElseThrow(() -> new RuntimeException("Такого тарифа нет!"));
+
+        roomTypeRate.setPrice(editRoomTypeRateDTO.price());
+        roomTypeRate.setDescription(editRoomTypeRateDTO.description());
+        roomTypeRateRepository.save(roomTypeRate);
+    }
 }
