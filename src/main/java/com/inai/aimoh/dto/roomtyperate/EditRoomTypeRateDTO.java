@@ -1,4 +1,4 @@
-package com.inai.aimoh.dto;
+package com.inai.aimoh.dto.roomtyperate;
 
 import java.math.BigDecimal;
 

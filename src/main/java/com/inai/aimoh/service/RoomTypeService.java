@@ -1,7 +1,9 @@
 package com.inai.aimoh.service;
 
 import com.inai.aimoh.dto.RoomTypeDTO;
+import com.inai.aimoh.entity.Room;
 import com.inai.aimoh.entity.RoomType;
+import com.inai.aimoh.repository.RoomRepository;
 import com.inai.aimoh.repository.RoomTypeRepository;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
@@ -14,6 +16,7 @@ import java.util.List;
 public class RoomTypeService {
 
     private final RoomTypeRepository roomTypeRepository;
+    private final RoomRepository roomRepository;
 
 
 
@@ -79,6 +82,13 @@ public class RoomTypeService {
     public void deleteRoomTypeById(Long roomTypeId) {
         RoomType roomType = roomTypeRepository.findById(roomTypeId)
                 .orElseThrow(() -> new RuntimeException("Такой тип комнаты нет, поэтому нельзя удалить!"));
+
+        //Здесь при удалении типа обнуляется поля тех номеров, у которых поля данного типа
+        List<Room> roomsWithThisType = roomRepository.findAllByRoomType(roomType);
+        for (Room room : roomsWithThisType) {
+            room.setRoomType(null);
+        }
+        roomRepository.saveAll(roomsWithThisType);
 
         roomTypeRepository.delete(roomType);
     }

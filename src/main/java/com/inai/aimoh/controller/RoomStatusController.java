@@ -30,7 +30,7 @@ public class RoomStatusController {
     @PostMapping("/edit/{id}")
     public ResponseEntity<String> editRoomStatus(@PathVariable Long id, @RequestBody RoomStatusDTO roomStatusDTO) {
         roomStatusService.updateRoomStatus(id, roomStatusDTO);
-        return ResponseEntity.ok("Успешно отредактирован тип комнаты!");
+        return ResponseEntity.ok("Успешно отредактирован статус комнаты!");
     }
 
     @DeleteMapping("/delete/{id}")

@@ -1,7 +1,9 @@
 package com.inai.aimoh.service;
 
 import com.inai.aimoh.dto.RoomStatusDTO;
+import com.inai.aimoh.entity.Room;
 import com.inai.aimoh.entity.RoomStatus;
+import com.inai.aimoh.repository.RoomRepository;
 import com.inai.aimoh.repository.RoomStatusRepository;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
@@ -14,6 +16,7 @@ import java.util.List;
 public class RoomStatusService {
 
     private final RoomStatusRepository roomStatusRepository;
+    private final RoomRepository roomRepository;
 
 
 
@@ -79,6 +82,13 @@ public class RoomStatusService {
     public void deleteRoomStatusById(Long roomStatusId) {
         RoomStatus roomStatus = roomStatusRepository.findById(roomStatusId)
                 .orElseThrow(() -> new RuntimeException("Такой статус комнаты нет, поэтому нельзя удалить!"));
+
+        //Здесь при удалении статуса обнуляется поля тех номеров, у которых поля данного статуса
+        List<Room> roomsWithThisStatus = roomRepository.findAllByRoomStatus(roomStatus);
+        for (Room room : roomsWithThisStatus) {
+            room.setRoomStatus(null);
+        }
+        roomRepository.saveAll(roomsWithThisStatus);
 
         roomStatusRepository.delete(roomStatus);
     }

@@ -1,7 +1,7 @@
 package com.inai.aimoh.service;
 
-import com.inai.aimoh.dto.AdminCreateRoomTypeRateDTO;
-import com.inai.aimoh.dto.EditRoomTypeRateDTO;
+import com.inai.aimoh.dto.roomtyperate.AdminCreateRoomTypeRateDTO;
+import com.inai.aimoh.dto.roomtyperate.EditRoomTypeRateDTO;
 import com.inai.aimoh.entity.RoomType;
 import com.inai.aimoh.entity.RoomTypeRate;
 import com.inai.aimoh.repository.RoomTypeRateRepository;
