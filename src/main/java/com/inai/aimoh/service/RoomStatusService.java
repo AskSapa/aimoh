@@ -67,4 +67,19 @@ public class RoomStatusService {
         roomStatus.setDescription(roomStatusDTO.description());
         roomStatusRepository.save(roomStatus);
     }
+
+
+
+
+    /**
+     * Метод для удаления статуса комнаты по id.
+     */
+
+    @Transactional
+    public void deleteRoomStatusById(Long roomStatusId) {
+        RoomStatus roomStatus = roomStatusRepository.findById(roomStatusId)
+                .orElseThrow(() -> new RuntimeException("Такой статус комнаты нет, поэтому нельзя удалить!"));
+
+        roomStatusRepository.delete(roomStatus);
+    }
 }

@@ -68,8 +68,18 @@ public class RoomTypeService {
         roomTypeRepository.save(roomType);
     }
 
+
+
+
+    /**
+     * Метод для удаления типа комнаты по id.
+     */
+
     @Transactional
     public void deleteRoomTypeById(Long roomTypeId) {
-        roomTypeRepository.deleteById(roomTypeId);
+        RoomType roomType = roomTypeRepository.findById(roomTypeId)
+                .orElseThrow(() -> new RuntimeException("Такой тип комнаты нет, поэтому нельзя удалить!"));
+
+        roomTypeRepository.delete(roomType);
     }
 }
