@@ -67,4 +67,9 @@ public class RoomTypeService {
         roomType.setDescription(roomTypeDTO.description());
         roomTypeRepository.save(roomType);
     }
+
+    @Transactional
+    public void deleteRoomTypeById(Long roomTypeId) {
+        roomTypeRepository.deleteById(roomTypeId);
+    }
 }

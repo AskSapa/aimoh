@@ -31,13 +31,6 @@ public class RoomTypeRateController {
         return ResponseEntity.ok("Успешно создан новый тариф для типа комнат '" + nameOfType + "'!");
     }
 
-    @DeleteMapping("/delete/{id}")
-    public ResponseEntity<String> deleteRoomTypeRate(@PathVariable Long id) {
-        String nameOfType = roomTypeRateService.findRoomTypeRateById(id).getRoomType().getName();
-        roomTypeRateService.deleteRoomTypeRateById(id);
-        return ResponseEntity.ok("Успешно удален данный тариф для типа комнат '" + nameOfType + "'!");
-    }
-
     @PostMapping("/edit/{id}")
     public ResponseEntity<String> editRoomTypeRate(@PathVariable Long id, @RequestBody EditRoomTypeRateDTO editRoomTypeRateDTO) {
         roomTypeRateService.updateRoomTypeRate(id, editRoomTypeRateDTO);

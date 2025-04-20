@@ -32,4 +32,10 @@ public class RoomTypeController {
         roomTypeService.updateRoomType(id, roomTypeDTO);
         return ResponseEntity.ok("Успешно отредактирован тип комнаты!");
     }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<String> deleteRoomType(@PathVariable Long id) {
+        roomTypeService.deleteRoomTypeById(id);
+        return ResponseEntity.ok("Успешно удален данный тип комнат!");
+    }
 }

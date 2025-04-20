@@ -59,18 +59,6 @@ public class RoomTypeRateService {
 
 
     /**
-     * Метод для удаления тарифа для определенного типа комнат администратором.
-     */
-
-    @Transactional
-    public void deleteRoomTypeRateById(Long roomTypeRateId) {
-        roomTypeRateRepository.deleteById(roomTypeRateId);
-    }
-
-
-
-
-    /**
      * Метод для поиска тарифа определенного типа комнат по id.
      */
 

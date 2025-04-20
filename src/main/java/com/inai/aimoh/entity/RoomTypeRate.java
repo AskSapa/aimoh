@@ -1,5 +1,6 @@
 package com.inai.aimoh.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -22,5 +23,6 @@ public class RoomTypeRate {
 
     @OneToOne
     @JoinColumn(name = "room_type_id", nullable = false, unique = true)
+    @JsonManagedReference
     private RoomType roomType;
 }

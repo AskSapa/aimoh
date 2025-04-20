@@ -1,5 +1,6 @@
 package com.inai.aimoh.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -17,4 +18,8 @@ public class RoomType {
 
     @Column(name = "description")
     private String description;
+
+    @OneToOne(mappedBy = "roomType", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonBackReference
+    private RoomTypeRate roomTypeRate;
 }
