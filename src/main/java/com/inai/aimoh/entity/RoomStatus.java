@@ -15,6 +15,6 @@ public class RoomStatus {
     @Column(name = "name", nullable = false, unique = true)
     private String name;
 
-    @Column(name = "dedescription")
+    @Column(name = "description")
     private String description;
 }
