@@ -26,4 +26,10 @@ public class BookingController {
         bookingService.createBooking(guestId, newBooking);
         return ResponseEntity.ok("Успешно создано бронирование!");
     }
+
+    @PatchMapping("/{bookingId}/cancel")
+    public ResponseEntity<String> cancelBooking(@PathVariable Long bookingId) {
+        bookingService.cancelBooking(bookingId);
+        return ResponseEntity.ok("Успешно отменено бронирование!");
+    }
 }

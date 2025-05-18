@@ -78,7 +78,6 @@ public class BookingService {
             throw new IllegalArgumentException("Нельзя забронировать данный номер, так как не указан тип номера!");
         }
 
-
         // До создания бронирования статус номера, которого хочет забронировать, меняется на "reserved" с "available"
         RoomStatus roomStatus = room.getRoomStatus();
         if (roomStatus == null) {
@@ -122,4 +121,18 @@ public class BookingService {
         bookingRepository.save(booking);
     }
 
+
+
+
+    /**
+     * Метод для отмены бронирования.
+     */
+
+    @Transactional
+    public void cancelBooking(Long bookingId) {
+        Booking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new RuntimeException("Нельзя бронировать, так как нет такого бронирования!"));
+        booking.setBookingStatus(bookingStatusRepository.findByName("cancelled")
+                .orElseThrow(() -> new RuntimeException("Статус 'cancelled' для бронирования еще не создан!")));
+    }
 }
