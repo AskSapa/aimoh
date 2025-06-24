@@ -1,5 +1,6 @@
 package com.inai.aimoh.entity;
 
+import com.inai.aimoh.entity.emun.PaymentMethod;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -21,8 +22,8 @@ public class Payment {
     @Column(name = "paid_at")
     private LocalDateTime paidAt;
 
-    @ManyToOne
-    @JoinColumn(name = "payment_method_id", nullable = false)
+    @Enumerated(value = EnumType.STRING)
+    @Column(name = "payment_method", nullable = false)
     private PaymentMethod paymentMethod;
 
     @OneToOne

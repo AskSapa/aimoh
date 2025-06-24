@@ -1,5 +1,6 @@
 package com.inai.aimoh.entity;
 
+import com.inai.aimoh.entity.emun.BookingStatus;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -33,13 +34,13 @@ public class Booking {
     @Column(name = "total_price", nullable = false)
     private BigDecimal totalPrice;
 
+    @Enumerated(value = EnumType.STRING)
+    @Column(name = "booking_status", nullable = false)
+    private BookingStatus bookingStatus;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "guestId", nullable = false)
     private User guest;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "booking_status_id", nullable = false)
-    private BookingStatus bookingStatus;
 
     @OneToOne(mappedBy = "booking", cascade = CascadeType.ALL, orphanRemoval = true)
     private Payment payment;

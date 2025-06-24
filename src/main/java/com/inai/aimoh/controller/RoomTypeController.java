@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/room-types")
+@RequestMapping("/api/v1/room-types")
 @AllArgsConstructor
 public class RoomTypeController {
 

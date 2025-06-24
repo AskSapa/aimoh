@@ -5,6 +5,6 @@ public record AdminCreateOrEditUserDTO(
         String password,
         String email,
         String firstName,
-        String surname,
-        Long roleId) {
+        String lastName,
+        String role) {
 }

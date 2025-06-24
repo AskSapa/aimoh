@@ -2,7 +2,6 @@ package com.inai.aimoh.repository;
 
 import com.inai.aimoh.entity.Booking;
 import com.inai.aimoh.entity.BookingStatus;
-import com.inai.aimoh.entity.Role;
 import com.inai.aimoh.entity.User;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
@@ -42,7 +41,7 @@ public class BookingRepositoryTest {
         testUser.setPassword("password");
         testUser.setEmail("email@gmail.com");
         testUser.setFirstName("Joomart");
-        testUser.setSurname("Koshoibekov");
+        testUser.setLastName("Koshoibekov");
         testUser.setRole(testRole);
         testUser.setDeleted(false);
         userRepository.save(testUser);

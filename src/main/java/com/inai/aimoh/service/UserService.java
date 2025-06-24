@@ -1,12 +1,13 @@
 package com.inai.aimoh.service;
 
 import com.inai.aimoh.dto.AdminCreateOrEditUserDTO;
-import com.inai.aimoh.entity.Role;
 import com.inai.aimoh.entity.User;
-import com.inai.aimoh.repository.RoleRepository;
+import com.inai.aimoh.entity.emun.Role;
+import com.inai.aimoh.entity.emun.UserStatus;
 import com.inai.aimoh.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,7 +17,7 @@ import java.util.List;
 public class UserService {
 
     private final UserRepository userRepository;
-    private final RoleRepository roleRepository;
+    private final PasswordEncoder passwordEncoder;
 
 
 
@@ -28,30 +29,29 @@ public class UserService {
      */
 
     @Transactional
-    public void createUserByAdmin(AdminCreateOrEditUserDTO adminCreateOrEditUserDTO) {
-        if (userRepository.existsByLogin(adminCreateOrEditUserDTO.login())) {
+    public void createUserByAdmin(AdminCreateOrEditUserDTO request) {
+        if (userRepository.existsByLogin(request.login())) {
             throw new IllegalArgumentException("Логин уже занят!");
         }
-        if (userRepository.existsByEmail(adminCreateOrEditUserDTO.email())) {
+        if (userRepository.existsByEmail(request.email())) {
             throw new IllegalArgumentException("Email уже зарегистрирован!");
         }
-
-        Role role = roleRepository.findById(adminCreateOrEditUserDTO.roleId())
-                .orElseThrow(() -> new RuntimeException("Роль не найдена"));
-
-        if ("GUEST".equals(role.getName())) {
+        Role role;
+        try {
+             role = Role.valueOf(request.role().toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Неправильно введенный роль: " + request.role());
+        }
+        if ("GUEST".equals(request.role())) {
             throw new IllegalArgumentException("Админ не может создать гостя");
         }
-
         User user = new User();
-        user.setLogin(adminCreateOrEditUserDTO.login());
-        user.setPassword(adminCreateOrEditUserDTO.password());
-        user.setEmail(adminCreateOrEditUserDTO.email());
-        user.setFirstName(adminCreateOrEditUserDTO.firstName());
-        user.setSurname(adminCreateOrEditUserDTO.surname());
-        user.setDeleted(false);
+        user.setLogin(request.login());
+        user.setPassword(passwordEncoder.encode(request.password()));
+        user.setEmail(request.email());
+        user.setFirstName(request.firstName());
+        user.setLastName(request.lastName());
         user.setRole(role);
-
         userRepository.save(user);
     }
 
@@ -67,12 +67,10 @@ public class UserService {
     public void deleteUserByAdmin(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("Пользователь не найден!"));
-
-        if ("ADMIN".equals(user.getRole().getName())) {
+        if ("ADMIN".equals(user.getRole().name())) {
             throw new IllegalArgumentException("Нельзя удалить другого администратора!");
         }
-
-        user.setDeleted(true);
+        user.setStatus(UserStatus.DELETED);
         userRepository.save(user);
     }
 
@@ -93,41 +91,39 @@ public class UserService {
     /**
      * Сам метод является для редактирования данных пользователей администратором.
      * @param userId это id пользователя, которого хочет изменить данные админ.
-     * @param adminCreateOrEditUserDTO это данные, на которую хочет изменить админ.
+     * @param request это данные, на которую хочет изменить админ.
      */
 
     @Transactional
-    public void updateUserByAdmin(Long userId, AdminCreateOrEditUserDTO adminCreateOrEditUserDTO) {
+    public void updateUserByAdmin(Long userId, AdminCreateOrEditUserDTO request) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("Пользователь не найден!"));
-
-        if ("ADMIN".equals(user.getRole().getName())) {
+        if ("ADMIN".equals(user.getRole().name())) {
             throw new IllegalArgumentException("Нельзя изменить данные другого администратора!");
         }
-
-        if (userRepository.existsByLogin(adminCreateOrEditUserDTO.login())
-                && !(user.getLogin().equals(adminCreateOrEditUserDTO.login()))) {
+        if (userRepository.existsByLogin(request.login())
+                && !(user.getLogin().equals(request.login()))) {
             throw new IllegalArgumentException("Логин уже занят!");
         }
-        if (userRepository.existsByEmail(adminCreateOrEditUserDTO.email())
-                && !(user.getEmail().equals(adminCreateOrEditUserDTO.email()))) {
+        if (userRepository.existsByEmail(request.email())
+                && !(user.getEmail().equals(request.email()))) {
             throw new IllegalArgumentException("Email уже зарегистрирован!");
         }
-
-        user.setLogin(adminCreateOrEditUserDTO.login());
-        user.setPassword(adminCreateOrEditUserDTO.password());
-        user.setEmail(adminCreateOrEditUserDTO.email());
-        user.setFirstName(adminCreateOrEditUserDTO.firstName());
-        user.setSurname(adminCreateOrEditUserDTO.surname());
-
-        Role role = roleRepository.findById(adminCreateOrEditUserDTO.roleId())
-                .orElseThrow(() -> new RuntimeException("Роль не найдена"));
-
-        if (!role.getName().equals("GUEST")
-                && !user.getRole().getName().equals("GUEST")) {
+        user.setLogin(request.login());
+        user.setPassword(request.password());
+        user.setEmail(request.email());
+        user.setFirstName(request.firstName());
+        user.setLastName(request.lastName());
+        Role role;
+        try {
+            role = Role.valueOf(request.role().toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Неправильно введенный роль: " + request.role() + "!");
+        }
+        if (!role.name().equals("GUEST")
+                && !user.getRole().name().equals("GUEST")) {
             user.setRole(role);
         }
-
         userRepository.save(user);
     }
 }

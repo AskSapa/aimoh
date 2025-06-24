@@ -1,6 +1,5 @@
 package com.inai.aimoh.repository;
 
-import com.inai.aimoh.entity.Role;
 import com.inai.aimoh.entity.User;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +27,7 @@ public class UserRepositoryTest {
         testUser.setPassword("password");
         testUser.setEmail("email@gmail.com");
         testUser.setFirstName("Joomart");
-        testUser.setSurname("Koshoibekov");
+        testUser.setLastName("Koshoibekov");
         testUser.setRole(testRole);
         testUser.setDeleted(false);
         userRepository.save(testUser);
@@ -42,7 +41,7 @@ public class UserRepositoryTest {
         Assertions.assertEquals(testUser.getPassword(), savedUser.getPassword());
         Assertions.assertEquals(testUser.getEmail(), savedUser.getEmail());
         Assertions.assertEquals(testUser.getFirstName(), savedUser.getFirstName());
-        Assertions.assertEquals(testUser.getSurname(), savedUser.getSurname());
+        Assertions.assertEquals(testUser.getLastName(), savedUser.getLastName());
     }
 
     @Test

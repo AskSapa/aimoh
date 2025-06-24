@@ -1,9 +1,7 @@
 package com.inai.aimoh.service;
 
 import com.inai.aimoh.dto.AdminCreateOrEditUserDTO;
-import com.inai.aimoh.entity.Role;
 import com.inai.aimoh.entity.User;
-import com.inai.aimoh.repository.RoleRepository;
 import com.inai.aimoh.repository.UserRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -148,7 +146,7 @@ public class UserServiceTest {
         testUser.setPassword("1234");
         testUser.setEmail("askatsaparov@gmail.com");
         testUser.setFirstName("Askat");
-        testUser.setSurname("Saparov");
+        testUser.setLastName("Saparov");
         testUser.setRole(role);
         testUser.setDeleted(false);
 
@@ -180,7 +178,7 @@ public class UserServiceTest {
         testUser.setPassword("1234");
         testUser.setEmail("askatsaparov@gmail.com");
         testUser.setFirstName("Askat");
-        testUser.setSurname("Saparov");
+        testUser.setLastName("Saparov");
         testUser.setRole(role);
         testUser.setDeleted(false);
 
@@ -215,7 +213,7 @@ public class UserServiceTest {
         testUser.setPassword("1234");
         testUser.setEmail("askatsaparov@gmail.com");
         testUser.setFirstName("Askat");
-        testUser.setSurname("Saparov");
+        testUser.setLastName("Saparov");
         testUser.setRole(role);
         testUser.setDeleted(false);
 
@@ -240,7 +238,7 @@ public class UserServiceTest {
         Assertions.assertEquals("newPassword", testUser.getPassword());
         Assertions.assertEquals("new@gmail.com", testUser.getEmail());
         Assertions.assertEquals("Ivan", testUser.getFirstName());
-        Assertions.assertEquals("Ivanov", testUser.getSurname());
+        Assertions.assertEquals("Ivanov", testUser.getLastName());
     }
 
     @Test
@@ -275,7 +273,7 @@ public class UserServiceTest {
         testUser.setPassword("1234");
         testUser.setEmail("askatsaparov@gmail.com");
         testUser.setFirstName("Askat");
-        testUser.setSurname("Saparov");
+        testUser.setLastName("Saparov");
         testUser.setRole(role);
         testUser.setDeleted(false);
 
@@ -307,7 +305,7 @@ public class UserServiceTest {
         testUser.setPassword("1234");
         testUser.setEmail("askatsaparov@gmail.com");
         testUser.setFirstName("Askat");
-        testUser.setSurname("Saparov");
+        testUser.setLastName("Saparov");
         testUser.setRole(role);
         testUser.setDeleted(false);
 
@@ -340,7 +338,7 @@ public class UserServiceTest {
         testUser.setPassword("1234");
         testUser.setEmail("askatsaparov@gmail.com");
         testUser.setFirstName("Askat");
-        testUser.setSurname("Saparov");
+        testUser.setLastName("Saparov");
         testUser.setRole(role);
         testUser.setDeleted(false);
 
@@ -374,7 +372,7 @@ public class UserServiceTest {
         testUser.setPassword("1234");
         testUser.setEmail("askatsaparov@gmail.com");
         testUser.setFirstName("Askat");
-        testUser.setSurname("Saparov");
+        testUser.setLastName("Saparov");
         testUser.setRole(role);
         testUser.setDeleted(false);
 
@@ -412,7 +410,7 @@ public class UserServiceTest {
         testUser.setPassword("1234");
         testUser.setEmail("askatsaparov@gmail.com");
         testUser.setFirstName("Askat");
-        testUser.setSurname("Saparov");
+        testUser.setLastName("Saparov");
         testUser.setRole(currentRole);
         testUser.setDeleted(false);
 
@@ -437,7 +435,7 @@ public class UserServiceTest {
         Assertions.assertEquals("newPassword", testUser.getPassword());
         Assertions.assertEquals("new@gmail.com", testUser.getEmail());
         Assertions.assertEquals("Ivan", testUser.getFirstName());
-        Assertions.assertEquals("Ivanov", testUser.getSurname());
+        Assertions.assertEquals("Ivanov", testUser.getLastName());
         Assertions.assertEquals(1L, testUser.getRole().getId());
     }
 
@@ -459,7 +457,7 @@ public class UserServiceTest {
         testUser.setPassword("1234");
         testUser.setEmail("askatsaparov@gmail.com");
         testUser.setFirstName("Askat");
-        testUser.setSurname("Saparov");
+        testUser.setLastName("Saparov");
         testUser.setRole(currentRole);
         testUser.setDeleted(false);
 
@@ -484,7 +482,7 @@ public class UserServiceTest {
         Assertions.assertEquals("newPassword", testUser.getPassword());
         Assertions.assertEquals("new@gmail.com", testUser.getEmail());
         Assertions.assertEquals("Ivan", testUser.getFirstName());
-        Assertions.assertEquals("Ivanov", testUser.getSurname());
+        Assertions.assertEquals("Ivanov", testUser.getLastName());
         Assertions.assertEquals(2L, testUser.getRole().getId());
     }
 }

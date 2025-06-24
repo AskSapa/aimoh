@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/room-type-rates")
+@RequestMapping("/api/v1/room-type-rates")
 @AllArgsConstructor
 public class RoomTypeRateController {
 

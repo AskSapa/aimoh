@@ -1,5 +1,6 @@
 package com.inai.aimoh.entity;
 
+import com.inai.aimoh.entity.emun.RoomStatus;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -19,8 +20,8 @@ public class Room {
     @JoinColumn(name = "room_type_id")
     private RoomType roomType;
 
-    @ManyToOne
-    @JoinColumn(name = "room_status_id")
-    private RoomStatus roomStatus;
+    @Enumerated(value = EnumType.STRING)
+    @Column(name = "room_status", nullable = false)
+    private RoomStatus roomStatus = RoomStatus.AVAILABLE;
 
 }

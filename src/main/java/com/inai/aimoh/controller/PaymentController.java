@@ -2,7 +2,6 @@ package com.inai.aimoh.controller;
 
 import com.inai.aimoh.dto.payment.CreatePaymentRequest;
 import com.inai.aimoh.dto.payment.PaymentResponse;
-import com.inai.aimoh.entity.Payment;
 import com.inai.aimoh.service.PaymentService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -11,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/payments")
+@RequestMapping("/api/v1/payments")
 @AllArgsConstructor
 public class PaymentController {
 

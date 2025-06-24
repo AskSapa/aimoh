@@ -4,10 +4,9 @@ import com.inai.aimoh.dto.payment.CreatePaymentRequest;
 import com.inai.aimoh.dto.payment.PaymentResponse;
 import com.inai.aimoh.entity.Booking;
 import com.inai.aimoh.entity.Payment;
-import com.inai.aimoh.entity.PaymentMethod;
+import com.inai.aimoh.entity.emun.BookingStatus;
+import com.inai.aimoh.entity.emun.PaymentMethod;
 import com.inai.aimoh.repository.BookingRepository;
-import com.inai.aimoh.repository.BookingStatusRepository;
-import com.inai.aimoh.repository.PaymentMethodRepository;
 import com.inai.aimoh.repository.PaymentRepository;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
@@ -24,8 +23,6 @@ public class PaymentService {
 
     private final PaymentRepository paymentRepository;
     private final BookingRepository bookingRepository;
-    private final PaymentMethodRepository paymentMethodRepository;
-    private final BookingStatusRepository bookingStatusRepository;
 
 
 
@@ -42,9 +39,9 @@ public class PaymentService {
                     payment.getId(),
                     payment.getAmount(),
                     payment.getPaidAt(),
-                    payment.getPaymentMethod().getName(),
+                    payment.getPaymentMethod().name(),
                     payment.getBooking().getId(),
-                    payment.getBooking().getGuest().getFirstName() + " " + payment.getBooking().getGuest().getSurname()
+                    payment.getBooking().getGuest().getFirstName() + " " + payment.getBooking().getGuest().getLastName()
             );
             paymentResponses.add(paymentResponse);
         }
@@ -56,30 +53,28 @@ public class PaymentService {
 
     /**
      * Метод, где создается данные о платеже
-     * @param request
      */
 
     @Transactional
     public void createPayment (CreatePaymentRequest request) {
         Booking booking = bookingRepository.findById(request.bookingId())
                 .orElseThrow(() -> new RuntimeException("Нет такого бронирования!"));
-
-        PaymentMethod paymentMethod = paymentMethodRepository.findById(request.paymentMethodId())
-                .orElseThrow(() -> new RuntimeException("Такой тип платежа не существует"));
-
+        PaymentMethod paymentMethod;
+        try {
+            paymentMethod = PaymentMethod.valueOf(request.paymentMethod().toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Такой тип платежа не существует: " + request.paymentMethod() + "!");
+        }
         if (!Objects.equals(booking.getGuest().getId(), request.guestId())) {
             throw new IllegalArgumentException("Нельзя оплатить данное бронирование, так это бронирование не ваше!");
         }
-
         Payment payment = new Payment();
         payment.setAmount(booking.getTotalPrice());
         payment.setPaidAt(LocalDateTime.now());
         payment.setBooking(booking);
         payment.setPaymentMethod(paymentMethod);
         paymentRepository.save(payment);
-
-        booking.setBookingStatus(bookingStatusRepository.findByName("confirmed")
-                .orElseThrow(() -> new RuntimeException("Статус 'confirmed' для бронирования еще не создан!")));
+        booking.setBookingStatus(BookingStatus.CONFIRMED);
         bookingRepository.save(booking);
     }
 }

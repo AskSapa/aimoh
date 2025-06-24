@@ -4,10 +4,9 @@ import com.inai.aimoh.dto.room.AdminCreateRoomDTO;
 import com.inai.aimoh.dto.room.UpdateStatusOfRoomRequest;
 import com.inai.aimoh.dto.room.UpdateTypeOfRoomRequest;
 import com.inai.aimoh.entity.Room;
-import com.inai.aimoh.entity.RoomStatus;
 import com.inai.aimoh.entity.RoomType;
+import com.inai.aimoh.entity.emun.RoomStatus;
 import com.inai.aimoh.repository.RoomRepository;
-import com.inai.aimoh.repository.RoomStatusRepository;
 import com.inai.aimoh.repository.RoomTypeRepository;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
@@ -21,7 +20,6 @@ public class RoomService {
 
     private final RoomRepository roomRepository;
     private final RoomTypeRepository roomTypeRepository;
-    private final RoomStatusRepository roomStatusRepository;
 
 
 
@@ -39,34 +37,23 @@ public class RoomService {
 
     /**
      * Метод для создания номера (комнаты) администратором.
-     * @param adminCreateRoomDTO слой, где передаются необходимые данные для создания номера.
+     * @param request слой, где передаются необходимые данные для создания номера.
      */
 
     @Transactional
-    public void createRoom(AdminCreateRoomDTO adminCreateRoomDTO) {
-        if (roomRepository.existsByNumber(adminCreateRoomDTO.number())) {
+    public void createRoom(AdminCreateRoomDTO request) {
+        if (roomRepository.existsByNumber(request.number())) {
             throw new IllegalArgumentException("Такой номер уже есть!");
         }
-
         Room room = new Room();
-        room.setNumber(adminCreateRoomDTO.number());
-
-        if (adminCreateRoomDTO.roomTypeId() != null) {
-            RoomType roomType = roomTypeRepository.findById(adminCreateRoomDTO.roomTypeId())
+        room.setNumber(request.number());
+        if (request.roomTypeId() != null) {
+            RoomType roomType = roomTypeRepository.findById(request.roomTypeId())
                     .orElseThrow(() -> new RuntimeException("Для создания номера такой тип комнаты не найден!"));
             room.setRoomType(roomType);
         } else {
             room.setRoomType(null);
         }
-
-        if (adminCreateRoomDTO.roomStatusId() != null) {
-            RoomStatus roomStatus = roomStatusRepository.findById(adminCreateRoomDTO.roomStatusId())
-                    .orElseThrow(() -> new RuntimeException("Для создания номера такой статус комнаты не найден!"));
-            room.setRoomStatus(roomStatus);
-        } else {
-            room.setRoomStatus(null);
-        }
-
         roomRepository.save(room);
     }
 
@@ -76,22 +63,20 @@ public class RoomService {
     /**
      * Метод для обновления статуса номера менеджером или администратором.
      * @param roomId это id номер, которого хотим обновить статус.
-     * @param updateStatusOfRoomRequest слой, через которого передается id статуса.
+     * @param request слой, через которого передается id статуса.
      */
 
     @Transactional
-    public void updateStatusOfRoom(Long roomId, UpdateStatusOfRoomRequest updateStatusOfRoomRequest) {
+    public void updateStatusOfRoom(Long roomId, UpdateStatusOfRoomRequest request) {
         Room room = roomRepository.findById(roomId)
                 .orElseThrow(() -> new RuntimeException("Такого номера нет!"));
-
-        Long roomStatusId = updateStatusOfRoomRequest.roomStatusId();
-        if (roomStatusId != null) {
-            RoomStatus status = roomStatusRepository.findById(roomStatusId)
-                    .orElseThrow(() -> new RuntimeException("Такой статус номера не найден!"));
-            room.setRoomStatus(status);
-        } else {
-            room.setRoomStatus(null);
+        RoomStatus roomStatus;
+        try {
+            roomStatus = RoomStatus.valueOf(request.roomStatus().toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Неправильный статус комнаты: " + request.roomStatus() + "!");
         }
+        room.setRoomStatus(roomStatus);
         roomRepository.save(room);
     }
 
@@ -101,15 +86,14 @@ public class RoomService {
     /**
      * Метод для обновления типа номера администратором.
      * @param roomId это id номер, которого хотим обновить тип.
-     * @param updateTypeOfRoomRequest слой, через которого передается id типа.
+     * @param request слой, через которого передается id типа.
      */
 
     @Transactional
-    public void updateTypeOfRoom(Long roomId, UpdateTypeOfRoomRequest updateTypeOfRoomRequest) {
+    public void updateTypeOfRoom(Long roomId, UpdateTypeOfRoomRequest request) {
         Room room = roomRepository.findById(roomId)
                 .orElseThrow(() -> new RuntimeException("Такого номера нет!"));
-
-        Long roomTypeId = updateTypeOfRoomRequest.roomTypeId();
+        Long roomTypeId = request.roomTypeId();
         if (roomTypeId != null) {
             RoomType type = roomTypeRepository.findById(roomTypeId)
                     .orElseThrow(() -> new RuntimeException("Такой тип номера не найден!"));

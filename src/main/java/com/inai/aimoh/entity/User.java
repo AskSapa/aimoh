@@ -1,5 +1,7 @@
 package com.inai.aimoh.entity;
 
+import com.inai.aimoh.entity.emun.Role;
+import com.inai.aimoh.entity.emun.UserStatus;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -24,13 +26,14 @@ public class User {
     @Column(name = "first_name", nullable = false)
     private String firstName;
 
-    @Column(name = "surname", nullable = false)
-    private String surname;
+    @Column(name = "lastName", nullable = false)
+    private String lastName;
 
+    @Enumerated(value = EnumType.STRING)
     @Column(name = "is_deleted", nullable = false)
-    private boolean isDeleted;
+    private UserStatus status = UserStatus.ACTIVE;
 
-    @ManyToOne
-    @JoinColumn(name = "role_id", nullable = false)
+    @Enumerated(value = EnumType.STRING)
+    @Column(name = "role", nullable = false)
     private Role role;
 }

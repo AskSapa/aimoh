@@ -3,6 +3,8 @@ package com.inai.aimoh.service;
 import com.inai.aimoh.dto.booking.BookingResponse;
 import com.inai.aimoh.dto.booking.CreateBookingRequest;
 import com.inai.aimoh.entity.*;
+import com.inai.aimoh.entity.emun.BookingStatus;
+import com.inai.aimoh.entity.emun.RoomStatus;
 import com.inai.aimoh.repository.*;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
@@ -19,9 +21,7 @@ public class BookingService {
 
     private final BookingRepository bookingRepository;
     private final RoomRepository roomRepository;
-    private final RoomStatusRepository roomStatusRepository;
     private final UserRepository userRepository;
-    private final BookingStatusRepository bookingStatusRepository;
 
 
 
@@ -41,9 +41,9 @@ public class BookingService {
                     booking.getCheckOut(),
                     booking.getPricePerNight(),
                     booking.getTotalPrice(),
-                    booking.getGuest().getFirstName() + " " + booking.getGuest().getSurname(),
+                    booking.getGuest().getFirstName() + " " + booking.getGuest().getLastName(),
                     booking.getGuest().getEmail(),
-                    booking.getBookingStatus().getName()
+                    booking.getBookingStatus().name()
             );
             bookingsResponse.add(bookingResponse);
         }
@@ -61,7 +61,6 @@ public class BookingService {
 
     @Transactional
     public void createBooking(Long guestId, CreateBookingRequest request) {
-
         // До создания бронирования идет валидация даты заезда и выезда.
         if (request.checkIn().isBefore(LocalDate.now())) {
             throw new IllegalArgumentException("Дата заезда не может быть в прошлом!");
@@ -69,7 +68,6 @@ public class BookingService {
         if (!request.checkOut().isAfter(request.checkIn())) {
             throw new IllegalArgumentException("Дата выезда должна быть позже даты заезда!");
         }
-
         // До создания бронирования проверяется на null значение типа номера и тарифа.
         Room room = roomRepository.findById(request.roomId())
                 .orElseThrow(() -> new RuntimeException("Такого номера нет!"));
@@ -77,34 +75,24 @@ public class BookingService {
         if (roomType == null) {
             throw new IllegalArgumentException("Нельзя забронировать данный номер, так как не указан тип номера!");
         }
-
         // До создания бронирования статус номера, которого хочет забронировать, меняется на "reserved" с "available"
         RoomStatus roomStatus = room.getRoomStatus();
-        if (roomStatus == null) {
-            throw new IllegalArgumentException("Данный номер недоступен (статус = null)!");
-        }
-        if (roomStatus.getName().equals("available")) {
-            room.setRoomStatus(roomStatusRepository.findByName("reserved")
-                    .orElseThrow(() -> new RuntimeException("Статус 'reserved' для номеров еще не создан!")));
+        if (roomStatus == RoomStatus.AVAILABLE) {
+            room.setRoomStatus(RoomStatus.RESERVED);
             roomRepository.save(room);
         } else {
            throw new IllegalArgumentException("Нельзя забронировать данный номер, так как данный номер недоступен!");
         }
-
         // Создается объект booking и ставится id гостя, который бронирует.
         Booking booking = new Booking();
         User guest = userRepository.findById(guestId)
                 .orElseThrow(() -> new RuntimeException("Не найден пользователь!"));
         booking.setGuest(guest);
-
         // Статус бронирования принимает "ожидает оплаты".
-        booking.setBookingStatus(bookingStatusRepository.findByName("waiting payment")
-                .orElseThrow(() -> new RuntimeException("Статус 'waiting payment' для бронирования еще не создан!")));
-
+        booking.setBookingStatus(BookingStatus.WAITING_PAYMENT);
         // Копируется номер комнаты и тип комнаты с room.
         booking.setRoomNumber(room.getNumber());
         booking.setRoomType(room.getRoomType().getName());
-
         // Устанавливаются данные
         booking.setCheckIn(request.checkIn());
         booking.setCheckOut(request.checkOut());
@@ -117,7 +105,6 @@ public class BookingService {
         int qtyOfNights = request.checkOut().getDayOfMonth() - request.checkIn().getDayOfMonth();
         BigDecimal totalPrice = booking.getPricePerNight().multiply(BigDecimal.valueOf(qtyOfNights));
         booking.setTotalPrice(totalPrice);
-
         bookingRepository.save(booking);
     }
 
@@ -131,8 +118,7 @@ public class BookingService {
     @Transactional
     public void cancelBooking(Long bookingId) {
         Booking booking = bookingRepository.findById(bookingId)
-                .orElseThrow(() -> new RuntimeException("Нельзя бронировать, так как нет такого бронирования!"));
-        booking.setBookingStatus(bookingStatusRepository.findByName("cancelled")
-                .orElseThrow(() -> new RuntimeException("Статус 'cancelled' для бронирования еще не создан!")));
+                .orElseThrow(() -> new RuntimeException("Нельзя отменить бронирование, так как нет такого бронирования!"));
+        booking.setBookingStatus(BookingStatus.CANCELLED);
     }
 }
